@@ -2,7 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	shorten "github.com/harisaginting/guin/api/v1/shorten"
+	"github.com/harisaginting/krdv/common/middleware"
+	"github.com/harisaginting/krdv/common/wire"
+	"gorm.io/gorm"
 )
 
 // Swagger Config
@@ -15,20 +17,31 @@ import (
 // @query.collection.format multi
 // @contact.name Harisa Ginting
 // @contact.url ”
-func V1(r *gin.RouterGroup) {
+func V1(r *gin.RouterGroup, db *gorm.DB) {
 	// Dependency injection
-	var shortenController shorten.Controller
+	apiAuth := wire.ApiAuth(db)
+	apiUser := wire.ApiUser(db)
 
-	// group v1
-	v1 := r.Group("v1")
+	member := middleware.Start(1)
+	// group rest
+	rest := r.Group("rest")
 	{
-		// config
-		apiShortenGroup := v1.Group("shorten")
+		// group v1
+		v1 := rest.Group("v1")
 		{
-			apiShortenGroup.POST("/", shortenController.Create)
+			// auth
+			apiAuthGroup := v1.Group("auth")
+			{
+				apiAuthGroup.POST("/register", apiAuth.Register)
+				apiAuthGroup.POST("/login", apiAuth.Login)
+				apiAuthGroup.GET("/me", member.MustMember(), apiAuth.Me)
+			}
+			// user
+			apiUserGroup := v1.Group("user")
+			{
+				apiUserGroup.GET("/", apiUser.List)
+			}
 		}
 	}
-	r.POST("/shorten", shortenController.Create)
-	r.GET("/:code", shortenController.Execute)
-	r.GET("/:code/stats", shortenController.Status)
+
 }

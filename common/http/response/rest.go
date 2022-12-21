@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/harisaginting/guin/common/utils/helper"
+	"github.com/harisaginting/krdv/common/utils/helper"
 )
 
 type Message struct {
@@ -102,4 +102,13 @@ func NoContent(c *gin.Context) {
 
 func Accepted(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusAccepted)
+}
+
+func Error(c *gin.Context, err string) {
+	var data interface{}
+	c.JSON(http.StatusInternalServerError, gin.H{
+		"status":        http.StatusOK,
+		"data":          data,
+		"error_message": err,
+	})
 }

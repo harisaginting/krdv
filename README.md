@@ -1,9 +1,13 @@
-# guin
+# These Project is forked from https://github.com/harisaginting/krdv
+
+### PREPARE ###
+rename variable *projectDirName* at file ./main.go to your local dir file name
 
 ### RUN DEVELOPMENT ###
 ```sh run``` 
 
 ### RUN BUILD ####
+
 ###### docker ######
 ```docker compose up -d --build```
 

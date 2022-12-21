@@ -13,14 +13,14 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	routeApi "github.com/harisaginting/guin/api"
-	"github.com/harisaginting/guin/common/log"
-	"github.com/harisaginting/guin/common/utils/helper"
-	database "github.com/harisaginting/guin/db"
-	"github.com/harisaginting/guin/frontend"
+	routeApi "github.com/harisaginting/krdv/api"
+	"github.com/harisaginting/krdv/common/log"
+	"github.com/harisaginting/krdv/common/utils/helper"
+	database "github.com/harisaginting/krdv/db"
+	"github.com/harisaginting/krdv/frontend"
 )
 
-const projectDirName = "guin" //  project name
+const projectDirName = "krdv" //  project name
 
 func main() {
 	runGin()
@@ -34,6 +34,12 @@ func runGin() {
 
 	port := helper.MustGetEnv("PORT")
 	app := gin.New()
+
+	// DB CONNECTION
+	db := database.Connection()
+	database.Migration(db)
+	app.Use(database.Inject(db))
+
 	ginConfig(ctx, app)
 
 	// route
@@ -46,7 +52,7 @@ func runGin() {
 
 	plain := app.Group("")
 	// API
-	routeApi.V1(plain)
+	routeApi.V1(plain, db)
 	// PAGE
 	frontend.Page(plain)
 
@@ -78,11 +84,6 @@ func runGin() {
 
 func ginConfig(ctx context.Context, app *gin.Engine) {
 	app.Use(gin.Logger())
-
-	// DB CONNECTION
-	db := database.Connection()
-	database.Migration(db)
-	app.Use(database.Inject(db))
 
 	// get default url request
 	app.UseRawPath = true
