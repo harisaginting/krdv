@@ -4,9 +4,10 @@ services:
   krdv-app:
     container_name: krdv
     restart: always
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: docker.io/harisaginting/test-kredivo
+    # build:
+    #   dockerfile: Dockerfile
+    #   context: .
     ports:
       - "4000:4000"
     expose:

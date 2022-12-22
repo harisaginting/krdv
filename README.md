@@ -1,15 +1,12 @@
-# These Project is forked from https://github.com/harisaginting/krdv
+# These Project is forked from https://github.com/harisaginting/guin
 
-### PREPARE ###
-rename variable *projectDirName* at file ./main.go to your local dir file name
-
-### RUN DEVELOPMENT ###
+## RUN DEVELOPMENT ##
 ```sh run``` 
 
-### RUN BUILD ####
+## RUN BUILD ##
 
-###### docker ######
-```docker compose up -d --build```
+##### docker ######
+```**docker compose up -d --build**```
 
 ###### local ######
 *LINUX*```GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build```
@@ -18,3 +15,7 @@ rename variable *projectDirName* at file ./main.go to your local dir file name
 
 ### TEST ###
 ```go test -v ./api/v1/shorten``` 
+
+
+## DOCUMENTATION ## 
+https://documenter.getpostman.com/view/7882534/UyxojjcD
