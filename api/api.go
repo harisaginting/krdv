@@ -21,6 +21,8 @@ func V1(r *gin.RouterGroup, db *gorm.DB) {
 	// Dependency injection
 	apiAuth := wire.ApiAuth(db)
 	apiUser := wire.ApiUser(db)
+	apiWatchlist := wire.ApiWatchlist(db)
+	apiMovie := wire.ApiMovie(db)
 
 	member := middleware.Start(1)
 	// group rest
@@ -40,6 +42,25 @@ func V1(r *gin.RouterGroup, db *gorm.DB) {
 			apiUserGroup := v1.Group("user")
 			{
 				apiUserGroup.GET("/", apiUser.List)
+			}
+
+			// movie
+			apiMovieGroup := v1.Group("movie")
+			{
+				apiMovieGroup.GET("/", apiMovie.List)
+				apiMovieGroup.GET("/:id", apiMovie.Get)
+			}
+
+			// Watchlist
+			ApiWatchlistGroup := v1.Group("watchlist")
+			{
+				ApiWatchlistGroup.GET("/", member.MustMember(), apiWatchlist.List)
+				ApiWatchlistGroup.POST("/", member.MustMember(), apiWatchlist.Create)
+				ApiWatchlistGroup.GET("/:id", member.MustMember(), apiWatchlist.Get)
+				ApiWatchlistGroup.POST("/:id", member.MustMember(), apiWatchlist.Update)
+				ApiWatchlistGroup.DELETE("/:id", member.MustMember(), apiWatchlist.Delete)
+				ApiWatchlistGroup.POST("/:id/:movie_id", member.MustMember(), apiWatchlist.AddMovie)
+				ApiWatchlistGroup.DELETE("/:id/:movie_id", member.MustMember(), apiWatchlist.DeleteMovie)
 			}
 		}
 	}

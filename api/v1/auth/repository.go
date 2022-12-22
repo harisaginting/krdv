@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/harisaginting/krdv/common/log"
 	"github.com/harisaginting/krdv/common/utils/helper"
@@ -41,13 +40,32 @@ func (repo *Repository) FindByUsername(ctx context.Context, username string) (us
 
 func (repo *Repository) Register(ctx context.Context, p PayloadUserRegister) (err error) {
 	var table dao.User
+	qx := repo.db
+	tx := qx.Debug().Begin()
+
 	helper.AdjustStructToStruct(p, &table)
-	user := repo.db.Save(&table)
+	user := tx.Save(&table)
 	err = user.Error
 	if err != nil {
+		log.Error(ctx, err)
+		tx.Rollback()
 		return
 	}
-	log.Info(ctx, fmt.Sprintf("Created : %s", table.ID))
+
+	favourite := dao.Watchlist{
+		Name:        "Favourite",
+		UserId:      table.ID,
+		IsFavourite: true,
+	}
+
+	wl := tx.Save(&favourite)
+	err = wl.Error
+	if err != nil {
+		log.Error(ctx, err)
+		tx.Rollback()
+		return
+	}
+	tx.Commit()
 
 	return
 }

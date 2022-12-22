@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	l "log"
+
 	"github.com/google/uuid"
 	"github.com/harisaginting/krdv/common/cache"
 	"github.com/harisaginting/krdv/common/utils/helper"
@@ -20,7 +22,7 @@ func ProviderService(r Repository) Service {
 	}
 }
 
-func (service *Service) Register(ctx context.Context, p PayloadUserRegister) (err error, res ResponseUserRegister) {
+func (service *Service) Register(ctx context.Context, p PayloadUserRegister) (res ResponseUserRegister, err error) {
 	check, _ := service.repo.FindByUsername(ctx, p.Username)
 	if check.ID != 0 {
 		err = errors.New("username already used")
@@ -43,7 +45,9 @@ func (service *Service) Register(ctx context.Context, p PayloadUserRegister) (er
 	if err != nil {
 		return
 	}
-	err = cache.SetKeyWithExpired(cacheKey, cacheData, "120m")
+	l.Println("p.Username", p.Username)
+	l.Println("p.Username", helper.PrintJson(cacheData))
+	err = cache.SetKeyWithExpired(cacheKey, p.Username, "120m")
 	if err != nil {
 		return
 	}
@@ -58,7 +62,7 @@ func (service *Service) Login(ctx context.Context, p PayloadUserLogin) (err erro
 		return
 	}
 
-	valid := helper.ComparePasswords(p.Password, check.Password)
+	valid := helper.ComparePasswords(check.Password, p.Password)
 	if !valid {
 		err = errors.New("invalid Password")
 		return

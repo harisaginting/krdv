@@ -21,14 +21,16 @@ var (
 func init() {
 	cfgredis := helper.ForceInt(helper.MustGetEnv("REDIS"))
 	if cfgredis == 0 {
-		disabled = false
+		disabled = true
+		err := fmt.Errorf("config redis disabled")
+		panic(err)
 	} else {
 		NewRedisClient()
 	}
 }
 
 func CreateCacheKey(value string) (cacheKey string) {
-	if disabled == true {
+	if disabled {
 		return
 	}
 	prefix := helper.GetEnvOrDefault("APP_NAME", "DEVELOPMENT") + ":" + helper.GetEnvOrDefault("MODE", "LOCAL") + ":"
@@ -39,18 +41,19 @@ func CreateCacheKey(value string) (cacheKey string) {
 
 // NewRedisClient
 func NewRedisClient() (err error) {
-	if disabled == true {
+	if disabled {
 		return
 	}
 	redisHost := helper.MustGetEnv("REDIS_HOST")
-	redisPort := helper.GetEnvOrDefault("REDIS_PORT", "6379")
+	redisPort := helper.MustGetEnv("REDIS_PORT")
 	if redisHost == "" || redisPort == "" {
 		log.Fatal(ctx, nil, "Redis Configuration Error")
 	}
 
 	redisAddr := redisHost + ":" + redisPort
-	redisPassword := helper.GetEnvOrDefault("REDIS_PASSWORD", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81")
-	dbNumber, err := strconv.Atoi(helper.GetEnvOrDefault("REDIS_DB", "0"))
+	redisUser := helper.MustGetEnv("REDIS_USER")
+	redisPassword := helper.MustGetEnv("REDIS_PASSWORD")
+	dbNumber, err := strconv.Atoi(helper.MustGetEnv("REDIS_DB"))
 	if err != nil {
 		log.Warn(ctx, fmt.Sprintf("Failed to convert string to int : %s ", err))
 	}
@@ -58,6 +61,7 @@ func NewRedisClient() (err error) {
 	// redis client
 	rdb = redis.NewClient(&redis.Options{
 		Addr:       redisAddr,
+		Username:   redisUser,
 		Password:   redisPassword,
 		DB:         dbNumber,
 		PoolSize:   1000,
@@ -77,7 +81,7 @@ func SetKey(key string, value interface{}) error {
 	if disabled == true {
 		return nil
 	}
-	log.Warn(ctx, fmt.Sprintf("Redis: Set key:", key))
+	log.Warn(ctx, fmt.Sprintf("Redis: Set key:%s", key))
 	err := rdb.Set(ctx, key, value, 0).Err()
 	if err == redis.Nil {
 		log.Warn(ctx, fmt.Sprintf("Redis: Set key Nil: %s", key))
@@ -104,24 +108,26 @@ func GetKey(key string) (string, error) {
 	return val, err
 }
 
-func SetKeyWithExpired(key string, value interface{}, expiredStr string) error {
-	if disabled == true {
-		return nil
+func SetKeyWithExpired(key string, value interface{}, expiredStr string) (err error) {
+	if disabled {
+		return
 	}
-	log.Warn(ctx, fmt.Sprintf("Redis: Set key:", key))
+	log.Warn(ctx, fmt.Sprintf("Redis: Set key:%s", key))
 	// sample expiredStr "24h"
 	// duration, _ := time.ParseDuration(24)
 	duration, _ := time.ParseDuration(expiredStr)
-	err := rdb.Set(ctx, key, value, duration).Err()
+	err = rdb.Set(ctx, key, value, duration).Err()
 
 	if err == redis.Nil {
 		log.Warn(ctx, fmt.Sprintf("Redis: Set key Nil: %s", key))
+		err = nil
 	}
 	if err != nil {
 		log.Warn(ctx, fmt.Sprintf("Redis: Error Set key: %s", err))
+		return
 	}
 
-	return nil
+	return
 }
 
 func GetTTL(key string) (td time.Duration) {

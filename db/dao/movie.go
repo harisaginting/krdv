@@ -8,25 +8,18 @@ import (
 )
 
 type Movie struct {
-	ID            int        `json:"id" gorm:"primaryKey"`
-	IDExternal    int        `json:"id_external"`
-	Featured      int        `json:"featured"`
-	Description   string     `json:"description"`
-	Revenue       string     `json:"revenue"`
-	Public        int        `json:"public"`
-	Name          string     `json:"name"`
-	SortBy        int        `json:"sort_by"`
-	BackdropPath  string     `json:"backdrop_path,omitempty"`
-	Runtime       int        `json:"runtime"`
-	AverageRating float64    `json:"average_rating"`
-	Iso31661      string     `json:"iso_3166_1"`
-	Adult         int        `json:"adult"`
-	PosterPath    string     `json:"poster_path,omitempty"`
-	CreatedAt     *time.Time `json:"created_at"`
-	UpdatedBy     string     `json:"updated_by"`
-	UpdatedAt     *time.Time `json:"updated_at"`
-	DeletedBy     string     `json:"deleted_by,omitempty"`
-	DeletedAt     *time.Time `json:"deleted_at,omitempty"`
+	ID           int        `json:"id,omitempty" gorm:"primaryKey"`
+	IDExternal   int        `json:"id_external"`
+	Title        string     `json:"title" gorm:"type:varchar(255)"`
+	BackdropPath string     `json:"backdrop_path,omitempty" gorm:"type:varchar(255)"`
+	Adult        int        `json:"adult"`
+	Overview     string     `json:"overview"`
+	CreatedBy    string     `json:"created_by,omitempty"`
+	CreatedAt    *time.Time `json:"created_at,omitempty"`
+	UpdatedBy    string     `json:"updated_by,omitempty"`
+	UpdatedAt    *time.Time `json:"updated_at,omitempty"`
+	DeletedBy    string     `json:"deleted_by,omitempty"`
+	DeletedAt    *time.Time `json:"deleted_at,omitempty"`
 }
 
 func (Movie) TableName() string {

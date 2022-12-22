@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/harisaginting/krdv/common/cache"
 	"github.com/harisaginting/krdv/common/log"
+	database "github.com/harisaginting/krdv/db"
+	"github.com/harisaginting/krdv/db/dao"
 )
 
 type middleware struct {
@@ -46,8 +48,17 @@ func (middleware *middleware) MustMember() gin.HandlerFunc {
 		}
 		username = strings.ReplaceAll(username, "\"", "")
 		context.Set("username", username)
+		user := GetByUsername(username)
+		context.Set("userid", user.ID)
 		context.Next()
 	}
+}
+
+func GetByUsername(username string) (user dao.User) {
+	db := database.Connection()
+	defer database.Close(db)
+	db.Where("username = ?", username).First(&user)
+	return
 }
 
 func (middleware *middleware) abort(status int, context *gin.Context, message interface{}) {

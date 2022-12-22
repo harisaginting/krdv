@@ -20,14 +20,14 @@ import (
 	"github.com/harisaginting/krdv/frontend"
 )
 
-const projectDirName = "krdv" //  project name
+const projectDirName = "KRDV" //  project name
 
 func main() {
 	runGin()
 }
 
 func runGin() {
-	helper.LoadEnv(projectDirName)
+	helper.LoadEnv()
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	log.Info(ctx, fmt.Sprintf("%s START", projectDirName))

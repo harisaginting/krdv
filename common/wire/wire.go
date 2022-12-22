@@ -6,6 +6,7 @@ package wire
 import (
 	googleWire "github.com/google/wire"
 	mAuth "github.com/harisaginting/krdv/api/v1/auth"
+	mMovie "github.com/harisaginting/krdv/api/v1/movie"
 	mReport "github.com/harisaginting/krdv/api/v1/report"
 	mUser "github.com/harisaginting/krdv/api/v1/user"
 	mWatchlist "github.com/harisaginting/krdv/api/v1/watchlist"
@@ -28,6 +29,15 @@ func ApiAuth(db *gorm.DB) mAuth.Controller {
 		mAuth.ProviderRepository,
 	)
 	return mAuth.Controller{}
+}
+
+func ApiMovie(db *gorm.DB) mMovie.Controller {
+	googleWire.Build(
+		mMovie.ProviderController,
+		mMovie.ProviderService,
+		mMovie.ProviderRepository,
+	)
+	return mMovie.Controller{}
 }
 
 func ApiWatchlist(db *gorm.DB) mWatchlist.Controller {

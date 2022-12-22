@@ -27,7 +27,7 @@ func (ctrl *Controller) Register(c *gin.Context) {
 		return
 	}
 	json.Unmarshal(request, &reqData)
-	err, resData = ctrl.service.Register(c.Request.Context(), reqData)
+	resData, err = ctrl.service.Register(c.Request.Context(), reqData)
 	if err != nil {
 		response.Error(c, err.Error())
 		return

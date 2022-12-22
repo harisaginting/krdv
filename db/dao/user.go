@@ -9,9 +9,9 @@ import (
 
 type User struct {
 	ID        int        `json:"id" gorm:"primaryKey"`
-	Username  string     `json:"username"  gorm:"unique_index"`
-	Fullname  string     `json:"fullname"`
-	Password  string     `json:"password"`
+	Username  string     `json:"username"  gorm:"unique_index;type:varchar(255)"`
+	Fullname  string     `json:"fullname" gorm:"type:varchar(255)"`
+	Password  string     `json:"password" gorm:"type:varchar(255)"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedBy string     `json:"updated_by"`
 	UpdatedAt *time.Time `json:"updated_at"`

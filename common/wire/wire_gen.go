@@ -8,6 +8,7 @@ package wire
 
 import (
 	"github.com/harisaginting/krdv/api/v1/auth"
+	"github.com/harisaginting/krdv/api/v1/movie"
 	"github.com/harisaginting/krdv/api/v1/report"
 	"github.com/harisaginting/krdv/api/v1/user"
 	"github.com/harisaginting/krdv/api/v1/watchlist"
@@ -27,6 +28,13 @@ func ApiAuth(db *gorm.DB) auth.Controller {
 	repository := auth.ProviderRepository(db)
 	service := auth.ProviderService(repository)
 	controller := auth.ProviderController(service)
+	return controller
+}
+
+func ApiMovie(db *gorm.DB) movie.Controller {
+	repository := movie.ProviderRepository(db)
+	service := movie.ProviderService(repository)
+	controller := movie.ProviderController(service)
 	return controller
 }
 

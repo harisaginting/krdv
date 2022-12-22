@@ -16,15 +16,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func LoadEnv(projectDirName string) {
-	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
-	currentWorkDirectory, _ := os.Getwd()
-	rootPath := projectName.Find([]byte(currentWorkDirectory))
-	godotenv.Load(string(rootPath) + `/.env`)
+func LoadEnv() {
+	godotenv.Load()
 }
 
 // MustGetEnv get environment value
 func MustGetEnv(key string) string {
+	godotenv.Load()
 	value := os.Getenv(key)
 	log.Println("ENV : ", key, value)
 	if len(value) == 0 {
@@ -39,7 +37,9 @@ func Now() time.Time {
 }
 
 func GetEnvOrDefault(key string, defaultValue string) string {
+	godotenv.Load()
 	value := os.Getenv(key)
+	log.Println("ENV : ", key, value)
 	if len(value) == 0 {
 		return defaultValue
 	}
@@ -61,6 +61,8 @@ func ForceInt(v interface{}) int {
 		result = int(v.(float64))
 	case string:
 		result, _ = strconv.Atoi(v.(string))
+	case any:
+		result = v.(int)
 	}
 	return result
 }

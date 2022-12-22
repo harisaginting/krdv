@@ -35,6 +35,11 @@ func ComparePasswords(hashedPwd, plainPwd string) bool {
 	return true
 }
 
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
 func GenerateToken(username, role, bd string) (signedToken string, err error) {
 	expireAt := time.Now().Add(time.Hour * 72)
 	tokenKey := generator.GenerateIdentifier()

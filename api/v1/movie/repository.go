@@ -1,4 +1,4 @@
-package user
+package movie
 
 import (
 	"context"
@@ -19,24 +19,9 @@ func ProviderRepository(db *gorm.DB) Repository {
 	}
 }
 
-func (repo *Repository) GetByUsername(ctx context.Context, username string) (user User, err error) {
-	var table dao.User
-	qx := repo.db
-	qx.Where("username = ?", username).First(&table)
-	if qx.Error != nil {
-		log.Error(ctx, qx.Error, "FindAllByCustomer: ")
-		err = qx.Error
-		return
-	}
-	log.Info(ctx, "Repo : ", table)
-	helper.AdjustStructToStruct(table, &user)
-	return
-}
-
 func (repo *Repository) FindAll(ctx context.Context) (users []User) {
 	var table dao.User
 	qx := repo.db
-
 	qx.Find(&table)
 	if qx.Error != nil {
 		log.Error(ctx, qx.Error, "FindAllByCustomer: ")
