@@ -1,4 +1,4 @@
-# These Project is forked from https://github.com/harisaginting/guin
+##### These Project is forked from https://github.com/harisaginting/guin #####
 
 ## RUN DEVELOPMENT ##
 ```sh run``` 
@@ -19,3 +19,7 @@
 
 ## DOCUMENTATION ## 
 https://documenter.getpostman.com/view/7882534/UyxojjcD
+
+
+## DOCKER HUB ## 
+https://hub.docker.com/repository/docker/harisaginting/test-kredivo
